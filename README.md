@@ -11,7 +11,7 @@
 ## Proje Bilgileri
 * **Kurum:** İstinye Üniversitesi
 * **Ders:** Bilişim Güvenliği Teknolojisi - Güvenli Web Yazılımı Geliştirme
-* **Danışman / Eğitmen:** [Danışman Hocanın Adı Soyadı]
+* **Danışman / Eğitmen:** Keyvan Arasteh Abbasabad
 * **Geliştirici:** Raşit Çankaya
 
 ## İçindekiler
