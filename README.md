@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://www.istinye.edu.tr/sites/default/files/2021-03/isu_logo_tr_0.png" alt="İstinye Üniversitesi Logosu" width="300">
+  <img src="https://images.seeklogo.com/logo-png/61/1/istinye-universitesi-logo-png_seeklogo-610039.png" width="300" alt="İstinye Üniversitesi Logosu">
 </div>
 
 # OWASP Karşılaştırmalı Web Portalı (Secure vs. Vulnerable Vault)
