@@ -1,0 +1,21 @@
+# Python önbellek
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Sanal Ortam
+venv/
+env/
+.venv/
+
+# Çevresel Değişkenler (Rubrik Zorunluluğu)
+.env
+.env.local
+
+# Veritabanı
+*.sqlite3
+*.db
+
+# IDE Ayarları
+.vscode/
+.idea/
