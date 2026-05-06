@@ -1,0 +1,16 @@
+# Python önbellek dosyaları
+__pycache__/
+*.py[cod]
+
+# Sanal ortam
+venv/
+env/
+
+# Veritabanı (Konteyner içinde sıfırdan oluşturulacağı için dışarıdakini kopyalamıyoruz)
+*.db
+*.sqlite3
+
+# Sırlar ve Git
+.env
+.git/
+.gitignore
