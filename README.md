@@ -27,4 +27,17 @@ Uygulama iki farklı rotadan (route) oluşur:
 1. **Kusurlu Rota (Vulnerable):** Siber saldırılara (SQLi, XSS) tamamen açık, zayıf kodlanmış bölüm.
 2. **Kusursuz Rota (Secure):** Girdi temizleme (sanitization), prepared statements ve CSRF token'ları kullanılarak sıkılaştırılmış güvenli bölüm.
 
+### 🐳 Docker ile Hızlı Çalıştırma (Önerilen)
+Sisteminizde Python kurulu olmasa bile projeyi izole bir konteyner olarak çalıştırabilirsiniz:
+
+1. Proje dizininde Docker imajını derleyin:
+   ```bash
+   docker build -t owasp-vault .
+   
+2. Konteyneri başlatın:
+```bash
+docker run -p 5000:5000 owasp-vault
+```
+3. Tarayıcınızdan `http://localhost:5000` adresine giderek portalı kullanmaya başlayabilirsiniz.
+
 *(Not: Proje aktif geliştirme aşamasındadır.)*
