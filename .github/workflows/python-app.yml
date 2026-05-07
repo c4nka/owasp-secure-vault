@@ -1,0 +1,30 @@
+name: OWASP Vault CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+        
+    - name: Bağımlılıkları Kur
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        
+    - name: Flake8 ile Kod Kalitesi (Linting) Kontrolü
+      run: |
+        # Sözdizimi hatalarını ve tanımsız değişkenleri yakala
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
