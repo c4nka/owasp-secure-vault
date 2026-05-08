@@ -1,0 +1,20 @@
+<form method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    
+    <input type="text" name="author" placeholder="Adınız" required style="width: 300px; padding: 5px;"><br><br>
+    <textarea name="content" placeholder="Notunuzu yazın..." required style="width: 300px; height: 100px; padding: 5px;"></textarea><br><br>
+    
+    <div style="margin-bottom: 15px; font-size: 14px; text-align: left; display: inline-block; width: 310px;">
+        <input type="checkbox" name="kvkk_consent" id="kvkk" required>
+        <label for="kvkk">
+            <a href="#" onclick="alert('KVKK Aydınlatma Metni: Bu form aracılığıyla topladığımız veriler sadece siber güvenlik eğitim projesi kapsamında işlenecektir.')">
+                KVKK Aydınlatma Metni
+            </a>'ni okudum ve onaylıyorum.
+        </label>
+    </div>
+    <br>
+    
+    <button type="submit" style="padding: 10px; background: green; color:white; border:none; cursor:pointer;">
+        Güvenli Şekilde Not Ekle
+    </button>
+</form>
