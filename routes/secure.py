@@ -51,3 +51,30 @@ def notes():
     conn.close()
     
     return render_template("secure.html", notes=notes, csrf_token=session["csrf_token"])
+
+@secure_bp.route("/forget", methods=["POST"])
+def forget():
+    # 1. [SAVUNMA] CSRF Kontrolü
+    submitted_token = request.form.get("csrf_token")
+    if not submitted_token or submitted_token != session.get("csrf_token"):
+        abort(403)
+        
+    author_to_delete = request.form.get("author")
+    if not author_to_delete:
+        return "HATA: Silinecek isim belirtilmedi.", 400
+
+    conn = get_db_connection()
+    
+    # 2. [HUKUKİ UYUM & SAVUNMA] Unutulma Hakkı + Prepared Statement
+    # Kullanıcının adıyla eşleşen TÜM verileri kalıcı olarak siler
+    query = "DELETE FROM notes WHERE author = ?"
+    
+    try:
+        conn.execute(query, (author_to_delete,))
+        conn.commit()
+    except Exception as e:
+        print("Veritabanı hatası:", e)
+    finally:
+        conn.close()
+        
+    return redirect("/secure/")
