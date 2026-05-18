@@ -14,3 +14,10 @@ Kusursuz rota, kullanıcıların daha önce rıza göstererek işlenmesine izin 
 
 - Kullanıcı, `/secure/forget` uç noktası üzerinden yazar adını beyan ederek sistemdeki tüm kayıtlarını silebilir.
 - Veritabanı işlemi, SQL Injection saldırılarını engellemek amacıyla `DELETE FROM notes WHERE author = ?` şeklinde *Prepared Statements* kullanılarak güvenli bir biçimde gerçekleştirilir.
+
+## 📦 KVKK Madde 11 ve GDPR Madde 20: Veri Taşınabilirliği (Data Portability)
+Kusursuz rota, modern veri mahremiyeti yasalarının en kritik taleplerinden biri olan veri taşınabilirliğini teknik olarak yerine getirir.
+
+- `/secure/download` uç noktası, ilgili veri sahibinin talebi üzerine veritabanında sadece o kişiye ait verileri filtreler.
+- Elde edilen veriler, uluslararası standartlara uygun, makinece okunabilir yapılandırılmış **JSON** formatına dönüştürülerek kullanıcıya şifreli bir oturum tüneli üzerinden indirilir.
+- Sorgu aşamasında *Prepared Statements* kullanılarak veri sızıntısı veya yetkisiz veri çekme (IDOR/SQLi) riskleri tamamen engellenmiştir.
