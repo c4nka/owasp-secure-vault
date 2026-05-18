@@ -78,3 +78,47 @@ def forget():
         conn.close()
         
     return redirect("/secure/")
+
+import json
+from flask import Response
+
+@secure_bp.route("/download", methods=["POST"])
+def download():
+    # 1. [SAVUNMA] CSRF Kontrolü
+    submitted_token = request.form.get("csrf_token")
+    if not submitted_token or submitted_token != session.get("csrf_token"):
+        abort(403)
+        
+    author_to_download = request.form.get("author")
+    if not author_to_download:
+        return "HATA: Kullanıcı adı belirtilmedi.", 400
+
+    conn = get_db_connection()
+    
+    # 2. [SAVUNMA & HUKUKİ UYUM] Parametreli Sorgu ile Sadece Kullanıcının Verilerini Çekme
+    query = "SELECT id, author, content FROM notes WHERE author = ?"
+    
+    try:
+        rows = conn.execute(query, (author_to_download,)).fetchall()
+        
+        # Gelen veriyi JSON formatına uygun sözlük listesine dönüştür
+        user_data = [
+            {"not_id": row["id"], "yazar": row["author"], "not_icerigi": row["content"]} 
+            for row in rows
+        ]
+        
+        # JSON verisini string'e çevir (Türkçe karakterleri korumak için ensure_ascii=False)
+        json_output = json.dumps(user_data, ensure_ascii=False, indent=4)
+        
+        # 3. Tarayıcıya dosyayı indirmesi talimatını veren Response nesnesi döndür
+        return Response(
+            json_output,
+            mimetype="application/json",
+            headers={"Content-Disposition": f"attachment; filename={author_to_download}_veri_paketi.json"}
+        )
+        
+    except Exception as e:
+        print("Veritabanı hatası:", e)
+        return "Veri çekme işlemi sırasında bir hata oluştu.", 500
+    finally:
+        conn.close()
