@@ -1,54 +1,58 @@
-# SQL Injection (SQLi) Anatomisi ve Savunma
+# 💉 SQL Injection (SQLi) Anatomisi ve Savunma Mimarisi
 
-Bu projede SQL Injection zafiyetinin nasıl oluştuğu ve nasıl engellendiği uygulamalı olarak gösterilmiştir.
+Bu doküman, projede uygulanan **SQL Injection (SQLi)** zafiyetinin nasıl çalıştığını, potansiyel etkilerini ve güvenli rotada (`/secure`) bu zafiyetin nasıl kapatıldığını teknik olarak açıklar.
 
-## 💥 Kusurlu Yaklaşım (Zafiyetin Nedeni)
-`vulnerable.py` içerisinde kullanıcıdan alınan girdi, hiçbir filtrelemeden geçirilmeden `f-string` kullanılarak doğrudan SQL sorgusuna yerleştirilir:
-```python
-query = f"INSERT INTO notes (content, author) VALUES ('{content}', '{author}')"
+## 1. SQL Injection Nedir?
+
+SQL Injection, saldırganların bir web uygulamasının veritabanı sorgularına müdahale etmesini sağlayan kritik bir güvenlik açığıdır. Saldırgan, kullanıcı girdisi alanlarına (örneğin, bir arama kutusu veya giriş formu) zararlı SQL komutları ekleyerek veritabanındaki verilere yetkisiz erişim sağlayabilir, verileri değiştirebilir veya silebilir.
+
+## 2. Zafiyetli Senaryo (Vulnerable Route)
+
+Zafiyetli rotada (`/vulnerable`), kullanıcılardan alınan notlar ve yazar isimleri hiçbir filtrelemeden geçirilmeden, doğrudan string birleştirme (string concatenation) yöntemiyle SQL sorgusuna eklenir.
+
+### 💥 İstismar (Exploitation) Örneği
+
+Saldırgan, "Yazar Adı" alanına şu payload'u girer:
+
+```sql
+Ahmet', 'Zararlı İçerik'); DROP TABLE notes; --
 ```
 
-Saldırgan forma ' OR 1=1 -- gibi bir payload girdiğinde, veritabanı bunu düz metin değil, çalıştırılabilir bir komut olarak algılar ve sorgunun mantığını bozar.
+## 🔍 Neden Çalışır?
+Arka planda çalışan SQL sorgusu şu şekildedir:
 
-🛡️ Kusursuz Yaklaşım (Savunma)
+```sql
+INSERT INTO notes (author, content) VALUES ('" + yazar_adi + "', '" + not_icerigi + "')
+```
 
-secure.py içerisinde bu zafiyet, endüstri standardı olan Prepared Statements (Parametreli Sorgular) kullanılarak tamamen kapatılmıştır:
+Saldırganın girdisi eklendiğinde sorgu şu hale gelir:
 
-```python
+```sql
+INSERT INTO notes (author, content) VALUES ('Ahmet', 'Zararlı İçerik'); DROP TABLE notes; --', 'Herhangi bir not')
+```
+
+Bu durumda veritabanı, önce INSERT işlemini yapar, ardından noktalı virgül (;) ile ayrılmış olan DROP TABLE notes komutunu çalıştırarak tüm tabloyu siler. -- kısmı ise sorgunun geri kalanını yorum satırı haline getirerek hata alınmasını engeller.
+
+## 3. Güvenli Senaryo ve Savunma (Secure Route)
+Güvenli rotada (/secure), SQL Injection saldırılarını tamamen engellemek için Prepared Statements (Parametreli Sorgular) kullanılmıştır.
+
+## 🛡️ Savunma Mekanizması: Prepared Statements
+Kullanıcıdan alınan veriler, doğrudan SQL sorgusuna eklenmek yerine, sorguda yer tutucular (genellikle ? veya %s) kullanılarak veritabanına gönderilir. Veriler, sorgudan ayrı bir parametre olarak iletilir.
+
+```
+# Kullanıcı girdisi parametreli sorgu (Prepared Statement) ile veritabanına iletilir
 query = "INSERT INTO notes (content, author) VALUES (?, ?)"
 conn.execute(query, (clean_content, clean_author))
 ```
 
-Burada soru işaretleri (?) yer tutucu olarak işlev görür. Veritabanı, dışarıdan gelen veriyi yapısal bir komut olarak değil, sadece "değer" olarak işler.
+## Neden Güvenlidir?
+Prepared Statements kullanıldığında, veritabanı sürücüsü (örneğin SQLite veya PostgreSQL), kullanıcı girdisini çalıştırılabilir SQL komutları olarak değil, sadece "veri" (string) olarak kabul eder. Saldırganın girdiği DROP TABLE gibi zararlı komutlar çalıştırılmaz, sadece yazar adının bir parçası olarak veritabanına kaydedilir.
 
-```markdown
-# Cross-Site Scripting (XSS) Anatomisi ve Savunma
+## 4. Etki ve Sonuç
+Uygulanan Prepared Statements yöntemi sayesinde:
 
-Web uygulamalarında sıkça karşılaşılan XSS (Stored XSS) zafiyeti, projenin kusurlu rotasında simüle edilmiştir.
+-- Veritabanındaki verilerin yetkisiz okunması, değiştirilmesi veya silinmesi (Data Breach) engellenmiştir.
 
-## 💥 Kusurlu Yaklaşım (Zafiyetin Nedeni)
-Kullanıcıların notlarını ekrana basarken Jinja2 template motorundaki `| safe` filtresi bilerek kullanılmıştır:
-```html
-{{ note.content | safe }}
-```
+-- SQL sorgularına müdahale edilerek sistem üzerinde komut çalıştırılması (RCE) riski ortadan kaldırılmıştır.
 
-Bu filtre, veritabanına kaydedilen HTML ve Javascript etiketlerinin (<script>alert(1);</script>) tarayıcı tarafından doğrudan çalıştırılmasına neden olur.
-
-🛡️ Kusursuz Yaklaşım (Savunma)
-
-secure.py rotasında dışarıdan alınan tüm girdiler işlenmeden önce Input Escape (Sanitization) işleminden geçirilir:
-
-```python
-from markupsafe import escape
-clean_content = escape(content)
-```
-
-Ayrıca güvenli şablonda (secure.html), Jinja2'nin varsayılan davranışı olan otomatik kaçış (auto-escaping) özelliği kullanılarak, zararlı kod parçacıklarının düz metne (string) dönüştürülmesi sağlanır.
-
-Tüm dosyaları kaydettikten sonra, zaman yatırımı kuralına uygun olması için bu dosyaları da bilgisayarında birkaç gün bekletmeni tavsiye ederim (Örneğin Docker commitinden 1 gün sonra). Atacağın commit komutları şu şekilde olmalıdır:
-
-```bash
-git add .
-git commit -m "docs: added CI/CD workflow, MIT license, and comprehensive vulnerability anatomy documentation"
-git push origin main,
-```
+-- Veri bütünlüğü ve gizliliği tam olarak sağlanmıştır.
