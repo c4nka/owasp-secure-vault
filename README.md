@@ -61,11 +61,7 @@ Bu proje, zafiyetli ve güvenli kodlama pratikleri arasındaki farkları uygulam
 .
 ├── .github/workflows/    # CI/CD Pipelines (Flake8)
 ├── docs/                 # Vulnerability anatomies & legal compliance documentation
-├── routes/               # Vulnerable and Secure route handlers
-├── templates/            # Jinja2 HTML templates
 ├── src/                  # Core application source code
-├── app.py                # Main Flask application
-├── database.py           # SQLite database configuration
 ├── requirements.txt      # Python dependencies
 ├── Dockerfile            # Container build instructions
 ├── docker-compose.yml    # Container orchestration & volume mapping
