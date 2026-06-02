@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: owasp_vault_app
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=production
+      # Logların terminalde ve dosyada anında görünmesini sağlar
+      - PYTHONUNBUFFERED=1 
+    volumes:
+      # Proje kodlarını anlık senkronize etmek için (Geliştirme aşamasında faydalıdır)
+      - .:/app
+      # ISO 27001 Denetim izlerinin konteyner silinse bile ana makinede kalmasını sağlar
+      - ./audit.log:/app/audit.log
+    restart: unless-stopped
+    
+    # [GÜVENLİK SIKIŞTIRMASI] Konteyner içindeki süreçlerin ek yetki almasını engeller
+    security_opt:
+      - no-new-privileges:true
+      
+    networks:
+      - secure_network
+
+networks:
+  secure_network:
+    driver: bridge
