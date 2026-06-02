@@ -63,7 +63,7 @@ Bu proje, zafiyetli ve güvenli kodlama pratikleri arasındaki farkları uygulam
 ├── docs/                 # Vulnerability anatomies & legal compliance documentation
 ├── routes/               # Vulnerable and Secure route handlers
 ├── templates/            # Jinja2 HTML templates
-├── src/                  # Sources
+├── src/                  # Core application source code
 ├── app.py                # Main Flask application
 ├── database.py           # SQLite database configuration
 ├── requirements.txt      # Python dependencies
