@@ -74,7 +74,7 @@ Bu proje, zafiyetli ve güvenli kodlama pratikleri arasındaki farkları uygulam
 ## 🚀 Getting Started / Kurulum
 
 ```bash
-git clone [https://github.com/rasitcankaya/](https://github.com/rasitcankaya/)[your-repo]
+git clone [https://github.com/c4nka/owasp-secure-vault](https://github.com/c4nka/owasp-secure-vault)
 cd [your-repo]
 
 # Start the application with Docker / Uygulamayı Docker ile başlatın
