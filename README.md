@@ -31,7 +31,7 @@
 | | |
 |---|---|
 | **Name / Ad Soyad** | Raşit Çankaya |
-| **Student ID / Öğrenci No** | `****2420191006****` |
+| **Student ID / Öğrenci No** | `2420191006` |
 
 ---
 
